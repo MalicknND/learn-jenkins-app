@@ -1,7 +1,9 @@
 pipeline {
     agent any
 
+        // This a list of stages that will be executed in the pipeline 
     stages {
+        // the build pipeline stage 
         stage('Build') {
             agent {
                 docker {
@@ -20,6 +22,7 @@ pipeline {
                 '''
             }
         }
+        // the test pipeline stage
         stage('Test') {
             agent {
                 docker {
@@ -36,6 +39,7 @@ pipeline {
         }
     }
 
+// This is the post section that will be executed after the stages are executed
     post {
         always {
             junit 'test-results/junit.xml'
