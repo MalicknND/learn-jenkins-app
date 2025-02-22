@@ -4,6 +4,7 @@ pipeline {
         // This a list of stages that will be executed in the pipeline 
     stages {
         // the build pipeline stage 
+        /*
         stage('Build') {
             agent {
                 docker {
@@ -22,6 +23,7 @@ pipeline {
                 '''
             }
         }
+        */
         // the test pipeline stage
         stage('Test') {
             agent {
@@ -34,6 +36,22 @@ pipeline {
             sh '''
                 test -f build/index.html
                 npm test
+            '''
+          }
+        }
+
+             stage('E2E') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.50.1-noble'
+                    reuseNode true
+                }
+            }
+          steps {
+            sh '''
+                npm install -g serve
+                serve -s build
+                npx playwright test
             '''
           }
         }
