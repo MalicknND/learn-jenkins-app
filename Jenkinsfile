@@ -3,7 +3,6 @@ pipeline {
 
     stages {
 
-        // Stage de Build
         stage('Build') {
             agent {
                 docker {
@@ -23,10 +22,8 @@ pipeline {
             }
         }
 
-        // Running stages in parallel
         stage('Tests') {
             parallel {
-                // Stage des tests unitaires
                 stage('Unit tests') {
                     agent {
                         docker {
@@ -34,6 +31,7 @@ pipeline {
                             reuseNode true
                         }
                     }
+
                     steps {
                         sh '''
                             #test -f build/index.html
@@ -47,7 +45,6 @@ pipeline {
                     }
                 }
 
-                // Stage des tests E2E
                 stage('E2E') {
                     agent {
                         docker {
@@ -55,14 +52,16 @@ pipeline {
                             reuseNode true
                         }
                     }
+
                     steps {
                         sh '''
                             npm install serve
                             node_modules/.bin/serve -s build &
                             sleep 10
-                            npx playwright test --reporter=html
+                            npx playwright test  --reporter=html
                         '''
                     }
+
                     post {
                         always {
                             publishHTML([
@@ -81,7 +80,6 @@ pipeline {
             }
         }
 
-              // Stage de Build
         stage('Deploy') {
             agent {
                 docker {
@@ -98,3 +96,4 @@ pipeline {
         }
     }
 }
+
